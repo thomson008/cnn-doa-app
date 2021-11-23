@@ -12,7 +12,7 @@ import pyroomacoustics as pra
 def init_models():
     print('Loading models...')
     # Load the TFLite model and allocate tensors.
-    base_dir = pathlib.Path(__file__).parent.parent.absolute()
+    base_dir = pathlib.Path(__file__).parent.absolute()
     az_model_file = os.path.join(base_dir, 'models', 'best_super_azimuth_model.tflite')
     el_model_file = os.path.join(base_dir, 'models', 'elevation_model.tflite')
     az_interpreter = tf.lite.Interpreter(model_path=az_model_file)
