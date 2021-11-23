@@ -38,8 +38,7 @@ class MainApp:
 if __name__ == '__main__':
     try:
         app = MainApp()
-        app.top.mainloop()
+        while True:
+            app.top.update()
     except Exception:
         sys.exit()
-
-    sys.exit()

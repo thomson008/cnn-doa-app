@@ -63,7 +63,7 @@ class SingleSourceApp(DoaApp):
             elevation_label, elevation_val, el_conf_label, el_conf_val
 
     def create_radio_buttons(self):
-        CNN = BooleanVar(self.data_frame, True)
+        CNN = BooleanVar(self.top, True)
         cnn_button = Radiobutton(self.data_frame, text='CNN', variable=CNN, value=True)
         cnn_button.place(relx=0.4, y=210, anchor=CENTER)
         music_button = Radiobutton(self.data_frame, text='MUSIC', variable=CNN, value=False)
@@ -77,10 +77,11 @@ class SingleSourceApp(DoaApp):
         az_label, az_val, az_conf_label, az_conf_val, el_label, el_val, el_conf_label, el_conf_val = self.create_labels()
         CNN = self.create_radio_buttons()
 
-        predictor = SingleSourcePredictor(CNN, self.lines, self.fig)
+        predictor = SingleSourcePredictor(self.lines, self.fig)
 
         while True:
             predictor.is_active = self.prediction_running
+            predictor.CNN = CNN.get()
 
             # Get probabilities from model
             all_confs = np.roll(predictor.az_confidences, UI_RESOLUTION // 2)

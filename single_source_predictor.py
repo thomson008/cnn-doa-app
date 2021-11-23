@@ -37,12 +37,12 @@ def init_models():
 
 
 class SingleSourcePredictor(Predictor):
-    def __init__(self, CNN, lines, fig, thresh=50, max_silence_frames=10):
+    def __init__(self, lines, fig, thresh=50, max_silence_frames=10):
         super().__init__(lines, fig, thresh, max_silence_frames)
         self.az_current_prediction = None
         self.el_current_prediction = None
         self.az_confidences = np.zeros(360 // AZIMUTH_RESOLUTION)
-        self.CNN = CNN
+        self.CNN = True
 
         self.stream = self.p.open(
             format=FORMAT, channels=CHANNELS, rate=RATE, input=True,
@@ -64,7 +64,7 @@ class SingleSourcePredictor(Predictor):
 
         if abs(np.max(mic_data)) > self.thresh and self.is_active:
             input_data = get_input_matrix(mic_data)
-            if self.CNN.get():
+            if self.CNN:
                 self.az_current_prediction = self.get_azimuth_prediction(input_data)
             else:
                 self.az_current_prediction = self.run_music(mic_data)
