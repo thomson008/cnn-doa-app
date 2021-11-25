@@ -1,11 +1,14 @@
 import math
 from tkinter import *
 import platform
+from tkinter import messagebox
 
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
+from multi_source_predictor import MultiSourcePredictor
+from single_source_predictor import SingleSourcePredictor
 from utils import UI_RESOLUTION, CHUNK
 
 
@@ -43,7 +46,7 @@ class DoaApp:
         self.exit_button = Button(self.data_frame, text="Exit", command=self.top.destroy,
                                   height=2, width=15, font=("Arial", 12), cursor="hand2")
         self.exit_button.place(relx=0.5, y=560, anchor=CENTER)
-        
+
         if platform.system() == 'Windows':
             self.window = Toplevel(self.top)
             self.open_plot()
@@ -113,6 +116,16 @@ class DoaApp:
         label.config(font=("Arial", 40), fg="#4a4a4a")
         label.pack()
 
+    def get_predictor(self, mode):
+        try:
+            return SingleSourcePredictor(self.lines, self.fig) \
+                if mode == 'single' else MultiSourcePredictor(self.lines, self.fig)
+        except OSError:
+            messagebox.showerror("Invalid input device",
+                                 "Input audio device does not have 8 channels. "
+                                 "Please connect the MiniDSP board and start the application again.")
+            self.top.destroy()
+
     def open_plot(self):
         self.window.title('Real-time signals plot')
 
@@ -124,8 +137,6 @@ class DoaApp:
         self.fig.suptitle('Microphone array data')
         plt.subplots_adjust(hspace=0.8, wspace=0.5)
 
-        self.fig.suptitle('Microphone array data')
-        plt.subplots_adjust(hspace=0.8, wspace=0.5)
         for i, ax in enumerate(self.axs.flat):
             ax.set_title(f'Microphone {i + 1}: {i * 60}\N{DEGREE SIGN}')
             ax.set_ylim(-300, 300)

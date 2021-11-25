@@ -4,9 +4,18 @@ from tkinter import *
 
 import numpy as np
 
-from single_source_predictor import SingleSourcePredictor
 from doa_app import DoaApp
 from utils import UI_RESOLUTION
+
+
+def print_statistics(predictor):
+    cnn_inference_time = round(np.mean(predictor.cnn_exec_times) * 1000, 1) \
+        if predictor.cnn_exec_times else 'N/A'
+    music_inference_time = round(np.mean(predictor.music_exec_times) * 1000, 1) \
+        if predictor.music_exec_times else 'N/A'
+    print(f'Application closed.')
+    print(f'Average CNN inference time (ms): {cnn_inference_time}')
+    print(f'Average MUSIC inference time (ms): {music_inference_time}')
 
 
 class SingleSourceApp(DoaApp):
@@ -77,7 +86,9 @@ class SingleSourceApp(DoaApp):
         az_label, az_val, az_conf_label, az_conf_val, el_label, el_val, el_conf_label, el_conf_val = self.create_labels()
         CNN = self.create_radio_buttons()
 
-        predictor = SingleSourcePredictor(self.lines, self.fig)
+        predictor = self.get_predictor('single')
+        if not predictor:
+            return
 
         while True:
             predictor.is_active = self.prediction_running
@@ -98,13 +109,7 @@ class SingleSourceApp(DoaApp):
                 self.color_arcs(C, display_confs, max_idx)
             except TclError:
                 predictor.is_active = False
-                cnn_inference_time = round(np.mean(predictor.cnn_exec_times) * 1000, 1) \
-                    if predictor.cnn_exec_times else 'N/A'
-                music_inference_time = round(np.mean(predictor.music_exec_times) * 1000, 1) \
-                    if predictor.music_exec_times else 'N/A'
-                print(f'Application closed.')
-                print(f'Average CNN inference time (ms): {cnn_inference_time}')
-                print(f'Average MUSIC inference time (ms): {music_inference_time}')
+                print_statistics(predictor)
                 return
 
             az_prediction = predictor.az_current_prediction
