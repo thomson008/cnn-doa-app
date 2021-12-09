@@ -1,7 +1,7 @@
 import os
 import pathlib
 
-import tensorflow as tf
+import tflite_runtime.interpreter as tflite
 
 from predictor import Predictor, get_mic_data, get_input_matrix, get_model_details
 from utils import *
@@ -12,7 +12,7 @@ def init_models():
     # Load the TFLite model and allocate tensors.
     base_dir = pathlib.Path(__file__).parent.absolute()
     az_model_file = os.path.join(base_dir, 'models', 'best_multi_source_model_2.tflite')
-    az_interpreter = tf.lite.Interpreter(model_path=az_model_file)
+    az_interpreter = tflite.Interpreter(model_path=az_model_file)
 
     print('Allocating tensors...')
     az_interpreter.allocate_tensors()

@@ -29,9 +29,10 @@ class DoaApp:
     # Radius of the circle
     RADIUS = DIM / 2 - DIST
 
-    def __init__(self, top):
+    def __init__(self, top, tpu=False):
         self.fig, self.axs = plt.subplots(3, 2, figsize=(6, 6))
         self.lines = []
+        self.tpu = tpu
 
         self.prediction_running = False
         self.top = top
@@ -116,9 +117,9 @@ class DoaApp:
         label.config(font=("Arial", 40), fg="#4a4a4a")
         label.pack()
 
-    def get_predictor(self, mode):
+    def get_predictor(self, mode, tpu=False):
         try:
-            return SingleSourcePredictor(self.lines, self.fig) \
+            return SingleSourcePredictor(self.lines, self.fig, tpu=tpu) \
                 if mode == 'single' else MultiSourcePredictor(self.lines, self.fig)
         except OSError:
             messagebox.showerror("Invalid input device",

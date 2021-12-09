@@ -86,7 +86,7 @@ class SingleSourceApp(DoaApp):
         az_label, az_val, az_conf_label, az_conf_val, el_label, el_val, el_conf_label, el_conf_val = self.create_labels()
         CNN = self.create_radio_buttons()
 
-        predictor = self.get_predictor('single')
+        predictor = self.get_predictor('single', tpu=self.tpu)
         if not predictor:
             return
 

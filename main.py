@@ -27,7 +27,7 @@ class MainApp:
         self.multi_source_button.place(relx=0.6, rely=0.5, anchor=CENTER)
 
     def start_single_source(self):
-        single_source_app = SingleSourceApp(self.top)
+        single_source_app = SingleSourceApp(self.top, tpu=tpu)
         single_source_app.run()
 
     def start_multi_source(self):
@@ -36,6 +36,10 @@ class MainApp:
 
 
 if __name__ == '__main__':
+    args = sys.argv
+    tpu = False
+    if len(args) > 1 and args[1] == '--tpu':
+        tpu = True
     try:
         app = MainApp()
         app.top.mainloop()

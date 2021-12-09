@@ -2,21 +2,28 @@ import os
 import pathlib
 import time
 
-import tensorflow as tf
+import tflite_runtime.interpreter as tflite
 
 from predictor import Predictor, get_mic_data, get_input_matrix, get_model_details
 from utils import *
-import pyroomacoustics as pra
+from pyroomacoustics.doa import MUSIC
+from pyroomacoustics import circular_2D_array
 
 
-def init_models():
+def init_models(tpu):
     print('Loading models...')
     # Load the TFLite model and allocate tensors.
     base_dir = pathlib.Path(__file__).parent.absolute()
-    az_model_file = os.path.join(base_dir, 'models', 'best_super_azimuth_model.tflite')
+    if tpu:
+        az_model_file = os.path.join(base_dir, 'models', 'quant_input_model_edgetpu.tflite')
+        az_interpreter = tflite.Interpreter(model_path=az_model_file,
+                                            experimental_delegates=[tflite.load_delegate('libedgetpu.so.1')])
+    else:
+        az_model_file = os.path.join(base_dir, 'models', 'best_super_azimuth_model.tflite')
+        az_interpreter = tflite.Interpreter(model_path=az_model_file)
+
     el_model_file = os.path.join(base_dir, 'models', 'elevation_model.tflite')
-    az_interpreter = tf.lite.Interpreter(model_path=az_model_file)
-    el_interpreter = tf.lite.Interpreter(model_path=el_model_file)
+    el_interpreter = tflite.Interpreter(model_path=el_model_file)
 
     print('Allocating tensors...')
     az_interpreter.allocate_tensors()
@@ -37,7 +44,7 @@ def init_models():
 
 
 class SingleSourcePredictor(Predictor):
-    def __init__(self, lines, fig, thresh=50, max_silence_frames=10):
+    def __init__(self, lines, fig, thresh=50, max_silence_frames=10, tpu=False):
         super().__init__(lines, fig, thresh, max_silence_frames)
         self.az_current_prediction = None
         self.el_current_prediction = None
@@ -54,7 +61,7 @@ class SingleSourcePredictor(Predictor):
 
         self.stream.start_stream()
         self.az_interpreter, self.az_input_details, self.az_output_details, \
-            self.el_interpreter, self.el_input_details, self.el_output_details = init_models()
+            self.el_interpreter, self.el_input_details, self.el_output_details = init_models(tpu)
 
     def callback(self, in_data, frame_count, time_info, status):
         data, mic_data = get_mic_data(in_data)
@@ -122,11 +129,11 @@ class SingleSourcePredictor(Predictor):
 
         # Radius constant, will always be the same for MiniDSP array
         mic_radius = 0.045
-        R = pra.circular_2D_array(center=mic_center, M=6, phi0=0, radius=mic_radius)
+        R = circular_2D_array(center=mic_center, M=6, phi0=0, radius=mic_radius)
         R = np.vstack((R, [mic_height] * 6))
 
         # Run MUSIC algorithm for DOA
-        doa = pra.doa.MUSIC(R, RATE, 256, n_grid=(360 // AZIMUTH_RESOLUTION))
+        doa = MUSIC(R, RATE, 256, n_grid=(360 // AZIMUTH_RESOLUTION))
         doa.locate_sources(input_data)
 
         prediction = round((doa.azimuth_recon[0] * 180 / math.pi))
