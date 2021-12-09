@@ -1,7 +1,7 @@
 from doa_app import DoaApp
 from tkinter import *
 
-from utils import UI_RESOLUTION, AZIMUTH_RESOLUTION
+from utils import UI_RESOLUTION
 
 
 class MultiSourceApp(DoaApp):
@@ -66,14 +66,18 @@ class MultiSourceApp(DoaApp):
             # Color arcs based on model probabilities
             try:
                 self.color_arcs(C, predictions)
-                angles = [(angle * AZIMUTH_RESOLUTION, conf) for angle, conf in enumerate(predictions) if conf > 0.5]
+                angles = [(angle * UI_RESOLUTION, conf) for angle, conf in enumerate(predictions) if conf > 0.5]
                 if len(angles) == 1:
                     az_val.config(text=f'{angles[0][0]}\N{DEGREE SIGN}')
                     az_conf_val.config(text=f'{round(angles[0][1] * 100, 1)}%')
+                    el_val.config(text='-')
+                    el_conf_val.config(text='-')
                 elif len(angles) == 2:
+                    az_val.config(text=f'{angles[0][0]}\N{DEGREE SIGN}')
+                    az_conf_val.config(text=f'{round(angles[0][1] * 100, 1)}%')
                     el_val.config(text=f'{angles[1][0]}\N{DEGREE SIGN}')
                     el_conf_val.config(text=f'{round(angles[1][1] * 100, 1)}%')
-                else:
+                elif len(angles) == 0:
                     az_val.config(text='-')
                     az_conf_val.config(text='-')
                     el_val.config(text='-')
