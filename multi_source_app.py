@@ -7,7 +7,7 @@ from utils import UI_RESOLUTION
 class MultiSourceApp(DoaApp):
     def color_arcs(self, C, predictions):
         arcs = []
-        for i, conf in enumerate(predictions):
+        for angle, conf in predictions:
             R = self.RADIUS * conf ** 0.5
             x_1 = y_1 = self.DIM / 2 - R
 
@@ -16,7 +16,7 @@ class MultiSourceApp(DoaApp):
             if conf > 0.5:
                 fill = '#78ebb3'
                 outline = '#2ca86b'
-                arc = C.create_arc(coord, start=i * UI_RESOLUTION - 5, extent=UI_RESOLUTION, fill=fill, outline=outline,
+                arc = C.create_arc(coord, start=angle - 5, extent=UI_RESOLUTION, fill=fill, outline=outline,
                                    width=2)
                 arcs.append(arc)
 
@@ -65,8 +65,9 @@ class MultiSourceApp(DoaApp):
 
             # Color arcs based on model probabilities
             try:
-                self.color_arcs(C, predictions)
                 angles = [(angle * UI_RESOLUTION, conf) for angle, conf in enumerate(predictions) if conf > 0.5]
+                angles = sorted(angles, key=lambda x: x[1])[-2:]
+                self.color_arcs(C, angles)
                 if len(angles) == 1:
                     az_val.config(text=f'{angles[0][0]}\N{DEGREE SIGN}')
                     az_conf_val.config(text=f'{round(angles[0][1] * 100, 1)}%')
