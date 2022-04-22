@@ -14,8 +14,8 @@ from utils import UI_RESOLUTION, CHUNK
 
 class DoaApp:
     # Window size
-    WIDTH = 780
-    HEIGHT = 460
+    WIDTH = 760
+    HEIGHT = 440
 
     # Canvas size
     DIM = HEIGHT
