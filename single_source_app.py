@@ -60,11 +60,11 @@ class SingleSourceApp(DoaApp):
         value_font_size = 25
 
         y_shift = 30
-        y_azimuth = 120
+        y_azimuth = 80
         az_conf_label, az_conf_val, azimuth_label, azimuth_val = self.create_doa_labels(
             'Azimuth', value_font_size, x, x_shift, y_azimuth, y_shift)
 
-        y_elevation = 250
+        y_elevation = 180
         el_conf_label, el_conf_val, elevation_label, elevation_val = self.create_doa_labels(
             'Elevation', value_font_size, x, x_shift, y_elevation, y_shift)
 
@@ -74,9 +74,9 @@ class SingleSourceApp(DoaApp):
     def create_radio_buttons(self):
         CNN = BooleanVar(self.top, True)
         cnn_button = Radiobutton(self.data_frame, text='CNN', variable=CNN, value=True)
-        cnn_button.place(relx=0.4, y=210, anchor=CENTER)
+        cnn_button.place(relx=0.4, y=160, anchor=CENTER)
         music_button = Radiobutton(self.data_frame, text='MUSIC', variable=CNN, value=False)
-        music_button.place(relx=0.6, y=210, anchor=CENTER)
+        music_button.place(relx=0.6, y=160, anchor=CENTER)
         Hovertip(cnn_button, 'Estimate azimuth angle with a \nneural network.')
         Hovertip(music_button, 'Estimate azimuth angle with \nMUSIC algorithm.')
         return CNN

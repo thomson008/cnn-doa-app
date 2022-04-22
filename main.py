@@ -7,8 +7,8 @@ from single_source_app import SingleSourceApp
 
 class MainApp:
     # Window size
-    WIDTH = 1000
-    HEIGHT = 650
+    WIDTH = 780
+    HEIGHT = 460
 
     def __init__(self):
         self.top = Tk()

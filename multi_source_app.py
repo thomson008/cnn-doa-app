@@ -40,11 +40,11 @@ class MultiSourceApp(DoaApp):
         value_font_size = 25
 
         y_shift = 30
-        y_first_azimuth = 120
+        y_first_azimuth = 80
         az_conf_label_1, az_conf_val_1, azimuth_label_1, azimuth_val_1 = self.create_doa_labels(
             'Azimuth 1', value_font_size, x, x_shift, y_first_azimuth, y_shift)
 
-        y_second_azimuth = 250
+        y_second_azimuth = 180
         az_conf_label_2, az_conf_val_2, azimuth_label_2, azimuth_val_2 = self.create_doa_labels(
             'Azimuth 2', value_font_size, x, x_shift, y_second_azimuth, y_shift)
 
